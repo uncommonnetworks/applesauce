@@ -260,8 +260,31 @@ class Resident extends Eloquent {
     {
         return $query->where('status_updated_at', '>', Carbon::createFromTimestamp(strtotime(RESIDENT_RECENTHOURS .' hours ago'))->toDateString());
     }
+/*
+
+    public function scopeMovedIn($query, $fromDate, $untilDate)
+    {
+        /*
+        return $query->whereIn('id',
+            DB::table('residentStatusHistory')->where('status', RESIDENTSTATUS_CURRENT)
+                ->where('endDate', '>', $untilDate)
+                ->where('startDate' '<', $fromDate)
+                ->lists('resident');
+        );
+        *
+        return $query->whereHas('residency', function ($qres) use($fromDate, $untilDate){
+            Log::info("query residency {$fromDate} - {$untilDate}");
+            $qres->where('start_date', '<', $untilDate)
+                ->where('start_date', '>', $fromDate);
+        });
+    }
 
 
+    public function scopeMovedOut($query, $fromDate, $untilDate)
+    {
+
+    }
+*/
 
     public function scopeNoLocker($query)
     {
@@ -556,7 +579,7 @@ class Resident extends Eloquent {
         return $residency;
     }
 
-    protected  function expireStrikes()
+    protected  function expire_strikes()
     {
         foreach($this->strikes() as $strike)
             $strike->expire();

@@ -82,28 +82,43 @@ class ReportsController extends BaseController
         })->download('xls');
     }
 
+    public static function getOwWeekly()
+    {
+        return View::make('reports.ow-weekly');
+    }
 
     public static function postOwWeekly()
     {
-        Excel::load( storage_path('reports') . '/ow-weekly.xls', function($reader)
+        $untilDate = new Carbon(Input::get('untilDate'));
+        $fromDate = new Carbon(Input::get('untilDate'));
+        $fromDate = $fromDate->subDays(7);
+
+        Excel::load( storage_path('reports') . '/ow-weekly.xls', function($reader) use($fromDate,$untilDate)
         {
 
-            $reader->sheet(function($sheet){
+            $reader->sheet(function($sheet) use($fromDate,$untilDate){
 
                 $row = 2;
 
                 foreach( Resident::current()->get() as $current )
-                    $sheet->appendRow($row++, ['', $current->sin, $current->display_name, $current->residency->start_date->format(Config::get('format.date'))]);
+                {
+                    $sheet->prependRow($row++, ['', $current->sin, $current->display_name, $current->residency->start_date->format('M d')]);
+                }
+
 
                 $row += 3;
 
-                foreach( Resident::former()->get() as $former )
-                    $sheet->prependRow($row++, ['', $former->sin, $former->display_name, $former->status_updated_at->format(Config::get('format.date'))]);
+                foreach( Residency::movedOut($fromDate, $untilDate)->get() as $movedOut )
+                    $sheet->prependRow($row++, ['', $movedOut->resident->sin, $movedOut->resident->display_name,
+                        $movedOut->start_date->format('M d'),
+                        $movedOut->end_date->format('M d')]);
 
                 $row += 3;
 
-                foreach( Resident::current()->recent()->get() as $current )
-                    $sheet->prependRow($row++, ['', $current->sin, $current->display_name, $current->residency->start_date->format(Config::get('format.date'))]);
+                foreach( Residency::movedIn($fromDate, $untilDate)->get() as $movedIn )
+                    $sheet->prependRow($row++, ['', $movedIn->resident->sin, $movedIn->resident->display_name,
+                        $movedIn->start_date->format('M d'),
+                        $movedIn->end_date ? $movedIn->end_date->format('M d') : '']);
 
 
             });

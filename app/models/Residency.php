@@ -59,6 +59,22 @@ class Residency extends Eloquent {
         return $this->query->whereNull('end_date');
     }
 
+    public function scopeMovedIn($query, $fromDate, $untilDate)
+    {
+        return $query->where('start_date', '<', $untilDate)
+                ->where('start_date', '>', $fromDate);
+
+    }
+
+
+    public function scopeMovedOut($query, $fromDate, $untilDate)
+    {
+        Log::info("query residency from $fromDate to $untilDate");
+        return $query->where('end_date', '<', $untilDate)
+            ->where('end_date', '>', $fromDate);
+    }
+
+
     /*
     |--------------------------------------------------------------------------
     | Setters
@@ -172,6 +188,7 @@ class Residency extends Eloquent {
 
 
         $this->end_date = Carbon::now();
+        $this->save();
 
         Note::makeNew(NOTETYPE_SHIFT, NOTEFLAG_OUTTAKE, null, "{$this->resident->display_name} has moved out, and is no longer a resident.", $this->resident);
 

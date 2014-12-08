@@ -178,7 +178,7 @@ Applesauce:
                 <a tabindex="-1" href="report/sign-in-sheet"><span class="mm-text">Sign-in Sheet</span></a>
             </li>
             <li>
-                <a href="#" tabindex="-1" id="report-ow-weekly-link"><span class="mm-text">OW Weekly</span></a>
+                <a href="report/ow-weekly" tabindex="-1"><span class="mm-text">OW Weekly</span></a>
 
             </li>
             <li>
@@ -350,10 +350,6 @@ Applesauce:
 @include('common.tasks-lockers')
 
 
-{{ Form::open(['action' => 'ReportsController@postOwWeekly']) }}
-<div id="enddate"></div>
-<button type="submit" class="btn btn-primary btn-flat btn-xs">OW Report</button>
-{{ Form::close() }}
 
 
 
@@ -375,25 +371,6 @@ Applesauce:
 
 
 
-<div id="report-ow-weekly-modal" class="modal fade" role="dialog" style="display: none;" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">Choose end date for weekly report.</div>
-            <div class="modal-body"">
-
-
-
-            </div>
-            <!-- / .modal-body -->
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
-        </div> <!-- / .modal-content -->
-    </div> <!-- / .modal-dialog -->
-</div>
-
-
-
 
 
 
@@ -409,11 +386,7 @@ Applesauce:
     });
     window.PixelAdmin.start(init);
 
-    $('#enddate').datepaginator({
-        textSelected: 'MMM d, YYYY',
-        size: 'small',
-        endDate: new Date()
-    });
+
 </script>
 
 
